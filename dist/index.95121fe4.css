@@ -75,10 +75,14 @@ body.dark .header .toggle {
   position: relative;
   font-size: 15px;
 }
-.editor > img {
+.editor .image-wrapper {
+  width: 100%;
+  position: relative;
+}
+.editor .image-wrapper > img {
   width: 100%;
 }
-.editor > img.disabled {
+.editor .image-wrapper > img.disabled {
   pointer-events: none;
 }
 .editor .tag {
@@ -104,6 +108,9 @@ body.dark .header .toggle {
   margin: 0 0 20px;
   height: auto;
 }
+.image-view.list .thumbnail-wrapper .thumbnail {
+  font-size: 15px;
+}
 .image-view .thumbnail-wrapper {
   cursor: pointer;
   flex: 0 0 calc(100% / 3 - 20px / 3);
@@ -120,6 +127,19 @@ body.dark .header .toggle {
 }
 .image-view .thumbnail-wrapper:not(:nth-child(3n)) {
   margin-right: 10px;
+}
+.image-view .thumbnail-wrapper .count {
+  position: absolute;
+  padding: 0.5em 1em;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  right: 0;
+  bottom: 0;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #fff;
+  border-radius: 0.7em 0 0 0;
 }
 .image-view .thumbnail-cover {
   position: absolute;
@@ -192,7 +212,7 @@ body.dark .header .toggle {
   z-index: 10;
   opacity: 0;
   transform: scale(0);
-  transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1), background-color 100ms cubic-bezier(0.4, 0, 0.2, 1);
   overflow: auto;
   visibility: hidden;
 }
