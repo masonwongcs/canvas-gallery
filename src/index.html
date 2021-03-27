@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Canvas Gallery</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style/style.scss" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="wrapper">
+        <h3>Simple Gallery</h3>
+        <div class="header-action">
+          <button class="toggle view"></button>
+          <button class="toggle darkmode"></button>
+        </div>
+      </div>
+    </header>
+    <div class="content">
+      <div class="wrapper">
+        <div class="image-view"></div>
+      </div>
+    </div>
+    <div class="modal">
+      <div class="container" id="image-modal">
+        <div class="modal-title">Add New Image</div>
+        <div class="modal-content">
+          <div class="editor"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="button save-btn">Save</button>
+        </div>
+      </div>
+    </div>
+    <div class="add-image-button">
+      <input
+        type="file"
+        multiple="multiple"
+        class="add-image"
+        name="image-input"
+        accept="image/png, image/jpeg"
+      />
+    </div>
+    <script src="./js/main.js"></script>
+  </body>
+</html>
