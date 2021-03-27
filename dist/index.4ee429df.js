@@ -8219,6 +8219,7 @@ class Gallery {
     this.imageUrl = [];
     this.tags = [{}];
     this.id = [];
+    this.pageIndex = 0;
     this.bindClickFunction();
     this.renderGallery();
     this.bindTagFunction();
@@ -8228,20 +8229,55 @@ class Gallery {
     this.imageUrl = [];
     this.tags = [{}];
     this.id = "";
+    this.pageIndex = 0;
     _jqueryDefault.default(".editor").empty();
     _jqueryDefault.default(".save-btn").removeClass("edit");
+    _jqueryDefault.default(".pagination").remove();
+  }
+  navigate() {
+    _jqueryDefault.default(".pagination").remove();
+    const hasPagination = this.imageUrl.length > 1;
+    if (hasPagination) {
+      const paginationDOM = `<div class="pagination">
+          <button class="nav prev disabled"></button>
+          <button class="nav next"></button>
+          <div class="page-numbers">
+            <span class="current-page">${this.pageIndex + 1}</span>&nbsp;of&nbsp;
+            <span class="total-page">${this.imageUrl.length}</div>
+          </div>
+        </div>`;
+      _jqueryDefault.default(".modal-content").append(_jqueryDefault.default(paginationDOM));
+    } else {
+      _jqueryDefault.default(".delete").remove();
+    }
+    if (this.pageIndex === this.imageUrl.length - 1) {
+      _jqueryDefault.default(".pagination .next").addClass("disabled");
+    } else {
+      _jqueryDefault.default(".pagination .next").removeClass("disabled");
+    }
+    if (this.pageIndex === 0) {
+      _jqueryDefault.default(".pagination .prev").addClass("disabled");
+    } else {
+      _jqueryDefault.default(".pagination .prev").removeClass("disabled");
+    }
+    _jqueryDefault.default(`.image-wrapper:nth-child(${this.pageIndex + 1})`).addClass("active").siblings().removeClass("active");
+    _jqueryDefault.default(".current-page").text(this.pageIndex + 1);
+    _jqueryDefault.default(".total-page").text(this.imageUrl.length);
   }
   bindClickFunction() {
     const that = this;
+    // Private function
     function receiveImage(e) {
       const {target: {result}} = e;
       const img = `<div class="image-wrapper">
+        <button class="delete"></button>
         <img src="${result}" />
       </div>`;
       _jqueryDefault.default(".editor").append(_jqueryDefault.default(img));
       that.imageUrl.push(result);
       that.id = Date.now();
       _jqueryDefault.default(".modal").addClass("show");
+      that.navigate();
     }
     _jqueryDefault.default(".add-image").change(function (e) {
       const currentInput = _jqueryDefault.default(this);
@@ -8252,6 +8288,9 @@ class Gallery {
         fileReader.readAsDataURL(files[i]);
       }
     });
+    /**
+    * All the click events
+    */
     _jqueryDefault.default(document).on("click", ".image-view .thumbnail", function (e) {
       const thumbnail = _jqueryDefault.default(e.target);
       const {top, left} = thumbnail.offset();
@@ -8263,14 +8302,34 @@ class Gallery {
       const data = that.getData(id);
       const {imageUrl, tags} = data[0];
       const imagesDOM = imageUrl.map(image => {
-        return `<div class="image-wrapper"><img src="${image}" /></div>`;
+        return `<div class="image-wrapper"><button class="delete"></button><img src="${image}" /></div>`;
       }).join("");
       that.id = id;
       that.tags = tags;
       that.imageUrl = imageUrl;
+      console.log(that.tags);
       _jqueryDefault.default(".editor").html(_jqueryDefault.default(imagesDOM));
       _jqueryDefault.default("#image-modal").find(".save-btn").addClass("edit");
       that.renderTags(tags);
+      that.navigate();
+    });
+    _jqueryDefault.default(document).on("click", ".pagination .prev", function (e) {
+      e.preventDefault();
+      that.pageIndex--;
+      that.navigate();
+    });
+    _jqueryDefault.default(document).on("click", ".pagination .next", function (e) {
+      e.preventDefault();
+      that.pageIndex++;
+      that.navigate();
+    });
+    _jqueryDefault.default(document).on("click", ".image-wrapper .delete", function (e) {
+      _jqueryDefault.default(this).parents(".image-wrapper").remove();
+      const parentIndex = _jqueryDefault.default(this).parents(".image-wrapper").index();
+      that.pageIndex = 0;
+      that.tags = that.tags.splice(parentIndex, 1);
+      that.imageUrl = that.imageUrl.splice(parentIndex, 1);
+      that.navigate();
     });
     _jqueryDefault.default(".toggle.view").click(function () {
       _jqueryDefault.default(this).toggleClass("list");
@@ -8283,6 +8342,26 @@ class Gallery {
       _jqueryDefault.default("body").toggleClass("dark");
       const isDark = _jqueryDefault.default("body").hasClass("dark");
       window.localStorage.setItem("isDark", isDark);
+    });
+    _jqueryDefault.default(".save-btn").click(function (e) {
+      e.preventDefault();
+      const isEdit = _jqueryDefault.default(this).hasClass("edit");
+      if (isEdit) {
+        that.setItem({
+          imageUrl: that.imageUrl,
+          tags: that.tags,
+          id: that.id
+        }, that.id);
+      } else {
+        that.setItem({
+          imageUrl: that.imageUrl,
+          tags: that.tags,
+          id: that.id
+        });
+      }
+      _jqueryDefault.default(".modal").removeClass("show");
+      that.renderGallery();
+      that.reset();
     });
   }
   detectView() {
@@ -8387,9 +8466,9 @@ class Gallery {
     });
     _jqueryDefault.default(document).on("mousedown", ".tag", function (e) {
       const dr = _jqueryDefault.default(this).addClass("drag").css("cursor", "move");
-      const boundary = _jqueryDefault.default(this).parents(".editor").find("img");
-      const id = _jqueryDefault.default(this).data("id");
       const parentIndex = _jqueryDefault.default(this).parents(".image-wrapper").index();
+      const boundary = _jqueryDefault.default(this).parents(".editor").find(`.image-wrapper:nth-child(${parentIndex + 1}) img`);
+      const id = _jqueryDefault.default(this).data("id");
       const boundaryWidth = boundary.width();
       const boundaryHeight = boundary.height();
       const height = dr.outerHeight();
@@ -8399,7 +8478,7 @@ class Gallery {
       const min_left = dr.parent().offset().left;
       const min_top = dr.parent().offset().top;
       const ypos = dr.offset().top + height - e.pageY, xpos = dr.offset().left + width - e.pageX;
-      _jqueryDefault.default(document.body).on("mousemove", function (e) {
+      _jqueryDefault.default(document.body).off("mousemove").on("mousemove", function (e) {
         let itop = e.pageY + ypos - height;
         let ileft = e.pageX + xpos - width;
         if (dr.hasClass("drag")) {
@@ -8420,33 +8499,13 @@ class Gallery {
             left: ileft
           });
         }
-      }).on("mouseup", function (e) {
+      }).off("mouseup").on("mouseup", function (e) {
         dr.removeClass("drag");
         if (that.tags[parentIndex] && that.tags[parentIndex][id]) {
           that.tags[parentIndex][id].top = dr[0].offsetTop / boundaryHeight * 100;
           that.tags[parentIndex][id].left = dr[0].offsetLeft / boundaryWidth * 100;
         }
       });
-    });
-    _jqueryDefault.default(".save-btn").click(function (e) {
-      e.preventDefault();
-      const isEdit = _jqueryDefault.default(this).hasClass("edit");
-      if (isEdit) {
-        that.setItem({
-          imageUrl: that.imageUrl,
-          tags: that.tags,
-          id: that.id
-        }, that.id);
-      } else {
-        that.setItem({
-          imageUrl: that.imageUrl,
-          tags: that.tags,
-          id: that.id
-        });
-      }
-      _jqueryDefault.default(".modal").removeClass("show");
-      that.renderGallery();
-      that.reset();
     });
   }
   renderGallery() {
@@ -8458,7 +8517,10 @@ class Gallery {
       */
       const tagArr = Object.entries(tags[0]);
       return `<div class="thumbnail-wrapper">
-          <div class="thumbnail-cover" style="background-image: url(${imageUrl[0]})"></div>
+          <div
+            class="thumbnail-cover"
+            style="background-image: url(${imageUrl[0]})"
+          ></div>
           <div class="thumbnail" data-id="${id}">
             <img class="thumbnail-image" src="${imageUrl[0]}" />
             ${tagArr.map(tag => {
@@ -8467,7 +8529,7 @@ class Gallery {
         return `<div class="thumbnail-tag" data-id="${key}" style="left: ${left}%; top: ${top}%;">${text}</div>`;
       }).join("")}
           </div>
-          ${imageUrl.length > 1 ? `<div class="count">${imageUrl.length}</div>` : ''}
+          ${imageUrl.length > 1 ? `<div class="count">${imageUrl.length}</div>` : ""}
         </div>`;
     }).join("");
     _jqueryDefault.default(".image-view").html(_jqueryDefault.default(images));

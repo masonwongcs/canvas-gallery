@@ -19,6 +19,12 @@ body.dark .header .toggle {
   width: 400px;
   margin: 0 auto;
 }
+@media screen and (max-width: 400px) {
+  .wrapper {
+    width: 100%;
+    padding: 0 5%;
+  }
+}
 .button {
   cursor: pointer;
   background: #2642f4;
@@ -74,10 +80,42 @@ body.dark .header .toggle {
 .editor {
   position: relative;
   font-size: 15px;
+  display: flex;
+  overflow: hidden;
 }
 .editor .image-wrapper {
   width: 100%;
+  flex: 0 0 400px;
   position: relative;
+  display: none;
+}
+@media screen and (max-width: 400px) {
+  .editor .image-wrapper {
+    flex: 0 0 100%;
+  }
+}
+.editor .image-wrapper.active {
+  display: block;
+}
+.editor .image-wrapper .delete {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  background: #8a0000 url(delete.b8067891.svg) center/50% no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 0 0 5px;
+  border: 0;
+  z-index: 10;
+}
+@media screen and (max-width: 400px) {
+  .editor .image-wrapper .delete {
+    z-index: 20;
+  }
 }
 .editor .image-wrapper > img {
   width: 100%;
@@ -94,6 +132,8 @@ body.dark .header .toggle {
   color: #fff;
   border-radius: 0.2em;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 .editor .tag[contenteditable=true] {
   cursor: text;
@@ -124,6 +164,11 @@ body.dark .header .toggle {
   margin-bottom: 10px;
   border-radius: 8px;
   border: 1px solid #ddd;
+}
+@media screen and (max-width: 400px) {
+  .image-view .thumbnail-wrapper {
+    height: 100px;
+  }
 }
 .image-view .thumbnail-wrapper:not(:nth-child(3n)) {
   margin-right: 10px;
@@ -230,6 +275,12 @@ body.dark .header .toggle {
   border-radius: 10px;
   position: relative;
 }
+@media screen and (max-width: 400px) {
+  .modal .container {
+    width: 100%;
+    padding: 0 5%;
+  }
+}
 .modal .modal-title {
   height: 50px;
   display: flex;
@@ -241,6 +292,53 @@ body.dark .header .toggle {
 }
 .modal .modal-content {
   width: 100%;
+  position: relative;
+}
+.modal .modal-content .pagination {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+@media screen and (max-width: 400px) {
+  .modal .modal-content .pagination {
+    z-index: 10;
+  }
+}
+.modal .modal-content .pagination .nav {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  outline: none;
+}
+.modal .modal-content .pagination .nav.prev {
+  left: 0;
+  background: url(left.7daf4a6f.svg) center/50% no-repeat;
+}
+.modal .modal-content .pagination .nav.next {
+  right: 0;
+  background: url(left.7daf4a6f.svg) center/50% no-repeat;
+  transform: scaleX(-1);
+}
+.modal .modal-content .pagination .nav.disabled {
+  opacity: 0.2;
+  pointer-events: none;
+}
+.modal .modal-content .pagination .page-numbers {
+  position: absolute;
+  bottom: -50px;
+  height: 50px;
+  left: 50px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  font-weight: bold;
 }
 .modal .modal-footer {
   display: flex;
@@ -256,5 +354,12 @@ body.dark .header .toggle {
 .modal .editor {
   margin: 0 auto;
   width: 400px;
+  position: relative;
+  z-index: 10;
+}
+@media screen and (max-width: 400px) {
+  .modal .editor {
+    width: 100%;
+  }
 }
 /*# sourceMappingURL=index.95121fe4.css.map */
