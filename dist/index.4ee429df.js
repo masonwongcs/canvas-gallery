@@ -8266,6 +8266,8 @@ class Gallery {
   }
   bindClickFunction() {
     const that = this;
+    const MAX_FILE_SIZE = 1 * 1000 * 1000;
+    // 1MB
     // Private function
     function receiveImage(e) {
       const {target: {result}} = e;
@@ -8284,6 +8286,11 @@ class Gallery {
       const files = currentInput[0].files;
       for (let i = 0; i < files.length; i++) {
         const fileReader = new FileReader();
+        const fileSize = files[i].size;
+        if (fileSize > MAX_FILE_SIZE) {
+          alert("Maximum file size is 1MB");
+          return;
+        }
         fileReader.onload = receiveImage;
         fileReader.readAsDataURL(files[i]);
       }
@@ -8307,7 +8314,6 @@ class Gallery {
       that.id = id;
       that.tags = tags;
       that.imageUrl = imageUrl;
-      console.log(that.tags);
       _jqueryDefault.default(".editor").html(_jqueryDefault.default(imagesDOM));
       _jqueryDefault.default("#image-modal").find(".save-btn").addClass("edit");
       that.renderTags(tags);
