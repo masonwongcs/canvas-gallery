@@ -13,6 +13,7 @@ class Gallery {
   }
 
   reset() {
+    // To reset states to initial value
     this.imageUrl = [];
     this.tags = [{}];
     this.id = "";
@@ -391,14 +392,16 @@ class Gallery {
 
   renderGallery() {
     const data = this.getData();
-    const images = data
-      .map((item) => {
-        const { id, imageUrl, tags } = item;
-        /**
-         * Display the first image in Thumbnails if > 1 image
-         */
-        const tagArr = Object.entries(tags[0]);
-        return `<div class="thumbnail-wrapper">
+
+    if (data.length !== 0) {
+      const images = data
+        .map((item) => {
+          const { id, imageUrl, tags } = item;
+          /**
+           * Display the first image in Thumbnails if > 1 image
+           */
+          const tagArr = Object.entries(tags[0]);
+          return `<div class="thumbnail-wrapper">
           <div
             class="thumbnail-cover"
             style="background-image: url(${imageUrl[0]})"
@@ -419,10 +422,17 @@ class Gallery {
               : ""
           }
         </div>`;
-      })
-      .join("");
+        })
+        .join("");
 
-    $(".image-view").html($(images));
+      $(".image-view").html($(images));
+    } else {
+      const placeholder = `<div class="placeholder">
+        <div class="placeholder-image"></div>No image yet
+      </div>`;
+
+      $(".image-view").html($(placeholder));
+    }
   }
 }
 

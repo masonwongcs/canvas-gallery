@@ -448,6 +448,7 @@ var _jqueryDefault = _parcelHelpers.interopDefault(_jquery);
 var _Gallery = require("./Gallery");
 var _GalleryDefault = _parcelHelpers.interopDefault(_Gallery);
 _jqueryDefault.default(document).ready(function () {
+  // Initialize the image Gallery
   new _GalleryDefault.default();
 });
 
@@ -8226,6 +8227,7 @@ class Gallery {
     this.detectView();
   }
   reset() {
+    // To reset states to initial value
     this.imageUrl = [];
     this.tags = [{}];
     this.id = "";
@@ -8516,13 +8518,14 @@ class Gallery {
   }
   renderGallery() {
     const data = this.getData();
-    const images = data.map(item => {
-      const {id, imageUrl, tags} = item;
-      /**
-      * Display the first image in Thumbnails if > 1 image
-      */
-      const tagArr = Object.entries(tags[0]);
-      return `<div class="thumbnail-wrapper">
+    if (data.length !== 0) {
+      const images = data.map(item => {
+        const {id, imageUrl, tags} = item;
+        /**
+        * Display the first image in Thumbnails if > 1 image
+        */
+        const tagArr = Object.entries(tags[0]);
+        return `<div class="thumbnail-wrapper">
           <div
             class="thumbnail-cover"
             style="background-image: url(${imageUrl[0]})"
@@ -8530,15 +8533,21 @@ class Gallery {
           <div class="thumbnail" data-id="${id}">
             <img class="thumbnail-image" src="${imageUrl[0]}" />
             ${tagArr.map(tag => {
-        const key = tag[0];
-        const {left, top, text} = tag[1];
-        return `<div class="thumbnail-tag" data-id="${key}" style="left: ${left}%; top: ${top}%;">${text}</div>`;
-      }).join("")}
+          const key = tag[0];
+          const {left, top, text} = tag[1];
+          return `<div class="thumbnail-tag" data-id="${key}" style="left: ${left}%; top: ${top}%;">${text}</div>`;
+        }).join("")}
           </div>
           ${imageUrl.length > 1 ? `<div class="count">${imageUrl.length}</div>` : ""}
         </div>`;
-    }).join("");
-    _jqueryDefault.default(".image-view").html(_jqueryDefault.default(images));
+      }).join("");
+      _jqueryDefault.default(".image-view").html(_jqueryDefault.default(images));
+    } else {
+      const placeholder = `<div class="placeholder">
+        <div class="placeholder-image"></div>No image yet
+      </div>`;
+      _jqueryDefault.default(".image-view").html(_jqueryDefault.default(placeholder));
+    }
   }
 }
 exports.default = Gallery;
